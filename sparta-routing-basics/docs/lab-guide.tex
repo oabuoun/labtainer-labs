@@ -2,24 +2,21 @@
 \begin{document}
 
 \begin{center}
-{\LARGE Routing Basics}
+{\LARGE Routing Basics - Lab Guide}
 \vspace{0.1in}\\
 \end{center}
 
 \copyrightnotice
 
 \section{Overview}
-This exercise explores basic network routing concepts 
-in a Linux environment.  These include use of the \texttt{route}
-command, defining a DNS server in the /etc/resolv.conf file,
-and using Network Address Translation (NAT). 
+This lab covers IP configuration and basic routing functionality used in Linux OS.
 
-This exercise, (and manual), is not intended to replace instruction
-or independent reading on the topic of network routing and
-routing in Linux systems. The exercise is intended to provide
-students with an environment with which they can experiment
-with the mechanics of routing network traffic.
-
+These include use of:
+\begin{itemize}
+	\item Add/Remove IP address using \texttt{ip address} command
+	\item Add/Remove routes using \texttt{ip route} command
+	\item Testing the connectivity using \texttt{ping} command
+\end{itemize}
 
 \section{Lab Environment}
 This lab runs in the Labtainer framework,
@@ -28,102 +25,399 @@ That site includes links to a pre-built virtual machine
 that has Labtainers installed, however Labtainers can
 be run on any Linux host that supports Docker containers.
 
-From your labtainer-student directory start the lab using:
+From your labtainer-student (~/labtainer/labtainer-student) directory start the lab using:
 \begin{verbatim}
-    labtainer routing-basics
+    labtainer sparta-routing-basics
 \end{verbatim}
-\noindent A link to this lab manual will be displayed.  
+\noindent A link to this lab guide will be displayed.
 
 \section{Network Configuration}
-This lab includes four networked computers as shown in Figure~\ref{fig:topology}.
-When the lab starts, you will get four virtual terminals, one connected to each
-component.
-The gateway is configured to perform routing between LAN1 and LAN2, and to
-route external addresses to an external gateway, e.g., to reach the Internet.
-The ws1 and ws2 workstations are pre-configured to route traffic to the gateway
-component.  The ws3 workstation is not yet configured for routing.
-
-The gateway is configured to use NAT to translate
-sources addresses of traffic from internal IP addresses, e.g., 192.168.1.1, to
-our external address, i.e., 203.0.113.10.
+This lab includes several IP networks as in Figure~\ref{fig:topology}.
+When the lab starts, you will get four virtual terminals, one connected to each component (Host/Router).
+\newline
+\newline
+\textbf{\textit{IP addresses and routing are not configured}}
+\newline
+\newline
+\textbf{Question 1:}
+How many IP networks in the shown topology ?
+\newline
+\newline
+\textbf{Question 2:}
+Can you make enumerate these IP networks (Network IDs, Subnet Masks) ?
+\newline
+\newline
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics [width=0.8\textwidth]{routing-basics.jpg}
+\includegraphics [width=0.8\textwidth]{labtainers-routing-basics-lab-01.png}
 \end{center}
 \caption{Network topology for routing-basics lab}
 \label{fig:topology}
 \end{figure}
 
+\section{Credentials}
+\begin{itemize}
+	\item \textbf{Host-11}:
+	\begin{itemize}
+		\item \textbf{Username:} user-11
+		\item \textbf{Password:} user-11
+	\end{itemize}
+	\item \textbf{Host-12}:
+	\begin{itemize}
+		\item \textbf{Username:} user-12
+		\item \textbf{Password:} user-12
+	\end{itemize}o
+	\item \textbf{Host-21}:
+	\begin{itemize}
+		\item \textbf{Username:} user-21
+		\item \textbf{Password:} user-21
+	\end{itemize}
+	\item \textbf{Host-22}:
+	\begin{itemize}
+		\item \textbf{Username:} user-22
+		\item \textbf{Password:} user-22
+	\end{itemize}o
+	\item \textbf{Router1}:
+	\begin{itemize}
+		\item \textbf{Username:} admin
+		\item \textbf{Password:} admin
+	\end{itemize}
+\end{itemize}
+
 \section{Lab Tasks}
-\subsection{Internal Routing}
-From each of the three workstations, enter the following command:
-\begin{verbatim}
-    route -n
-\end{verbatim}
-\noindent Note how ws1 and ws2 include routing table entries that name the
-gateway as the \textit{default gateway}.  This allows ws1 and ws2 to address each other, which 
-can be demonstrated by using \texttt{ping} from ws1 to reach ws2:
+\subsection{Configuring Network 10.1.1.0/24}
+
+\subsubsection{Host-11 Configuration}
+Lets start by configuring the IP address and verify it
+\textbf{IP address}: 10.1.1.1/24
 
 \begin{verbatim}
-    ping [ws2 IP]
+    sudo ip address add 10.1.1.1/24 dev eth0
+    ip address
 \end{verbatim}
 
-Now consider ws2 and ws3.  Since they are both on the same LAN, they can ping
-each other.  Try that for yourself.  Then try to ping ws1 from ws3.  That will
-fail because ws3 has no routing table entry defining what to do with traffic 
-that is not destined for a LAN directly connected to ws3.
+\textbf{Configuring the Default Gateway}: 10.1.1.254/24
+\begin{verbatim}
+    sudo ip route add default via 10.1.1.254
+    ip route
+\end{verbatim}
 
-On ws3, define the gateway component as the \textit{default gateway} using the 
-\texttt{route} command, but this time using \texttt{sudo} because we are altering the routing:
+\subsubsection{Host-12 Configuration}
+Lets start by configuring the IP address and verify it
+\newline
+\newline
+\textbf{IP address}: 10.1.1.2/24
 
 \begin{verbatim}
-    sudo route add default gw [gateway IP]
+    sudo ip address add 10.1.1.1/24 dev eth0
+    ip address
 \end{verbatim}
-\noindent Then try to ping between ws1 and ws3. 
 
-\subsection{Routing to the Internet}
-The gateway component is configured to route to a simulated ISP at 203.0.113.1, which 
-is a hidden component that provides routing to the Internet for this lab.  From ws2, 
-try to ping www.google.com.  Then do the same from ws3.  The problem with ws3 is that
-it has no domain name service (DNS) definition.  Note, routing from ws3 to the Internet
-works fine, which you can confirm by pinging the IP address of www.google.com (as displayed
-when you pinged from ws2).  The ws3 component simply lacks a DNS definition. 
-On ws2, the DNS is defined to be the
-gateway component, and this is achieved in the \texttt{/etc/resolv.conf} file \footnote{
-Many Linux systems include tools for defining your DNS, and these tools will overwrite
-the resolv.conf file.  That is not an issue in these labs}.  If you 
-modify that file on ws3 to match that of ws2, that will tell ws3 to use the gateway
-as its DNS.
+\textbf{Configuring the Default Gateway}: 10.1.1.254/24
 
-\subsection{Use of Network Address Translation (NAT)}
-Finally, review how the gateway component implements NAT using the \texttt{iptables} 
-utility.  Consider traffic from ws1 destined for www.google.com. The source IP address
-on those packets is 192.168.1.1.  The ws1 component sends the packets to its default
-gateway, i.e., our gateway component.  The gateway routing table is configured to
-send external traffic to 203.0.113.1.  However, before that traffic is sent, we need
-to translate the source IP address to our exernal 203.0.113.10 address so that google knows
-where to send replies.  
-Use this command:
 \begin{verbatim}
-    sudo iptables -L -v -t nat
+    sudo ip route add default via 10.1.1.254
+    ip route
 \end{verbatim}
-\noindent to view our NAT rule, having a target of \texttt{MASQUERADE}, which will translate
-source addresses for all traffic destined for our external network interface.  Then use 
-this command:
-\begin{verbatim}
-    sudo iptables -L -v 
-\end{verbatim}
-\noindent to see that we are forwarding traffic received from the two LANs. 
 
-Our iptables NAT rules are defined in the /etc/rc.local file on the gateway component.  
+\subsubsection{Testing the connectivity}
+Lets make sure that the two hosts can exchange traffic.
+\newline
+\begin{itemize}
+	\item On Host-11 (Ping Host-11 -$>$ Host-12)
+	\begin{verbatim}
+	    ping 10.1.1.2
+	\end{verbatim}
+
+	What is the result ?
+	\item On Host-12 (Ping Host-12 -$>$ Host-11)
+	\begin{verbatim}
+	    ping 10.1.1.1
+	\end{verbatim}
+
+	What is the result ?
+	\item On Host-11 (Ping Host-11 -$>$ Router1)
+	\begin{verbatim}
+	    ping 10.1.1.254
+	\end{verbatim}
+
+	What is the result ?
+	\item On Host-12 (Ping Host-12 -$>$ Router1)
+	\begin{verbatim}
+	    ping 10.1.1.254
+	\end{verbatim}
+
+	What is the result ?
+\end{itemize}
+
+
+\subsubsection{Router1 Configuration}
+Lets configure the IP address on eth1
+\textbf{IP address}: 10.1.1.254/24
+
+\begin{verbatim}
+    sudo ip address add 10.1.1.254/24 dev eth1
+    ip address
+\end{verbatim}
+
+\subsubsection{Testing the connectivity}
+Lets make sure that the two hosts can exchange traffic.
+\newline
+\begin{itemize}
+	\item On Host-12 (Ping Router1 -$>$ Host-11)
+	\begin{verbatim}
+	    ping 10.1.1.1
+	\end{verbatim}
+
+	What is the result ?
+	\item On Host-11 (Ping Router1 -$>$ Host-12)
+	\begin{verbatim}
+	    ping 10.1.1.2
+	\end{verbatim}
+
+	What is the result ?
+	\item On Host-11 (Ping Host-11 -$>$ Router1)
+	\begin{verbatim}
+	    ping 10.1.1.254
+	\end{verbatim}
+
+	What is the result ?
+	\item On Host-12 (Ping Host-12 -$>$ Router1)
+	\begin{verbatim}
+	    ping 10.1.1.254
+	\end{verbatim}
+
+	What is the result ?
+\end{itemize}
+
+
+\subsection{Configuring Network 10.1.2.0/24}
+
+\subsubsection{Host-21 Configuration}
+Lets start by configuring the IP address and verify it
+\newline
+\newline
+\textbf{IP address}: 10.1.2.1/24
+
+\begin{verbatim}
+    sudo ip address add 10.1.2.1/24 dev eth0
+    ip address
+\end{verbatim}
+
+\textbf{Configuring the Default Gateway}: 10.1.2.254/24
+\begin{verbatim}
+    sudo ip route add default via 10.1.2.254
+    ip route
+\end{verbatim}
+
+\subsubsection{Host-22 Configuration}
+Lets start by configuring the IP address and verify it
+\textbf{IP address}: 10.1.2.2/24
+
+\begin{verbatim}
+    sudo ip address add 10.1.2.1/24 dev eth0
+    ip address
+\end{verbatim}
+
+\textbf{Configuring the Default Gateway}: 10.1.2.254/24
+
+\begin{verbatim}
+    sudo ip route add default via 10.1.2.254
+    ip route
+\end{verbatim}
+
+\subsubsection{Testing the connectivity}
+Lets make sure that the two hosts can exchange traffic.
+\newline
+\begin{itemize}
+	\item On Host-21 (Ping Host-21 -$>$ Host-22)
+	\begin{verbatim}
+	    ping 10.1.2.2
+	\end{verbatim}
+
+	What is the result ?
+	\item On Host-22 (Ping Host-22 -$>$ Host-21)
+	\begin{verbatim}
+	    ping 10.1.2.1
+	\end{verbatim}
+
+	What is the result ?
+	\item On Host-21 (Ping Host-21 -$>$ Router2)
+	\begin{verbatim}
+	    ping 10.1.2.254
+	\end{verbatim}
+
+	What is the result ?
+	\item On Host-22 (Ping Host-22 -$>$ Router2)
+	\begin{verbatim}
+	    ping 10.1.2.254
+	\end{verbatim}
+
+	What is the result ?
+\end{itemize}
+
+
+\subsubsection{Router2 Configuration}
+Lets configure the IP address on eth1
+\textbf{IP address}: 10.1.2.254/24
+
+\begin{verbatim}
+    sudo ip address add 10.1.2.254/24 dev eth1
+    ip address
+\end{verbatim}
+
+\subsubsection{Testing the connectivity}
+Lets make sure that the two hosts can exchange traffic.
+\newline
+\begin{itemize}
+	\item On Host-22 (Ping Router2 -$>$ Host-21)
+	\begin{verbatim}
+	    ping 10.1.2.1
+	\end{verbatim}
+
+	What is the result ?
+	\item On Host-21 (Ping Router2 -$>$ Host-22)
+	\begin{verbatim}
+	    ping 10.1.2.2
+	\end{verbatim}
+
+	What is the result ?
+	\item On Host-21 (Ping Host-21 -$>$ Router2)
+	\begin{verbatim}
+	    ping 10.1.2.254
+	\end{verbatim}
+
+	What is the result ?
+	\item On Host-22 (Ping Host-22 -$>$ Router2)
+	\begin{verbatim}
+	    ping 10.1.2.254
+	\end{verbatim}
+
+	What is the result ?
+\end{itemize}
+
+\subsection{Configuring Network 172.16.0.0/29}
+
+\subsubsection{Router1 Configuration}
+Lets start by configuring the IP address and verify it
+\textbf{IP address}: 172.16.0.1/29
+
+\begin{verbatim}
+    sudo ip address add 172.16.0.1/29 dev eth0
+    ip address
+\end{verbatim}
+
+\subsubsection{Router2 Configuration}
+Lets start by configuring the IP address and verify it
+\textbf{IP address}: 172.16.0.2/29
+
+\begin{verbatim}
+    sudo ip address add 172.16.0.1/29 dev eth0
+    ip address
+\end{verbatim}
+
+\subsubsection{Testing the connectivity}
+Lets make sure that the two routers can exchange traffic. Then lets try to check if the hosts on different networks can exchange any traffic
+\newline
+\begin{itemize}
+	\item On Router1 (Ping Router1 -$>$ Router2:172.16.0.2)
+	\begin{verbatim}
+	    ping 172.16.0.2
+	\end{verbatim}
+
+	What is the result ?
+	\item On Router2 (Ping Router2 -$>$ Router1:172.16.0.1)
+	\begin{verbatim}
+	    ping 172.16.0.1
+	\end{verbatim}
+
+	What is the result ?
+	\item On Host-11 (Ping Host-11 -$>$ Host-21)
+	\begin{verbatim}
+	    ping 10.1.2.1
+	    traceroute 10.1.2.1
+	\end{verbatim}
+
+	\item On Host-11 (Ping Host-11 -$>$ Host-22)
+	\begin{verbatim}
+	    ping 10.1.2.2
+	    traceroute 10.1.2.2
+	\end{verbatim}
+
+	\item On Host-12 (Ping Host-12 -$>$ Host-21)
+	\begin{verbatim}
+	    ping 10.1.2.1
+	    traceroute 10.1.2.1
+	\end{verbatim}
+
+	\item On Host-12 (Ping Host-12 -$>$ Host-22)
+	\begin{verbatim}
+	    ping 10.1.2.2
+	    traceroute 10.1.2.2
+	\end{verbatim}
+
+	What is the result ?
+\end{itemize}
+
+
+\subsubsection{Routing Configuration: Router1}
+Lets configure the routing on Router1
+\textbf{Routing to 10.1.2.0/24: via 172.16.0.2}
+
+\begin{verbatim}
+    sudo ip route add 10.1.2.0/24 via 172.16.0.2
+    ip route
+\end{verbatim}
+
+\subsubsection{Routing Configuration: Router2}
+Lets configure the routing on Router2
+\newline
+\newline
+\textbf{Routing to 10.1.1.0/24: via 172.16.0.1}
+
+\begin{verbatim}
+    sudo ip route add 10.1.1.0/24 via 172.16.0.1
+    ip route
+\end{verbatim}
+
+\subsubsection{Testing the connectivity}
+Lets make sure that all hosts can exchange traffic.
+\newline
+\begin{itemize}
+	\item On Host-11 (Ping Host-11 -$>$ Host-21)
+	\begin{verbatim}
+	    ping 10.1.2.1
+	    traceroute 10.1.2.1
+	\end{verbatim}
+
+	\item On Host-11 (Ping Host-11 -$>$ Host-22)
+	\begin{verbatim}
+	    ping 10.1.2.2
+	    traceroute 10.1.2.2
+	\end{verbatim}
+
+	\item On Host-12 (Ping Host-12 -$>$ Host-21)
+	\begin{verbatim}
+	    ping 10.1.2.1
+	    traceroute 10.1.2.1
+	\end{verbatim}
+
+	\item On Host-12 (Ping Host-12 -$>$ Host-22)
+	\begin{verbatim}
+	    ping 10.1.2.2
+	    traceroute 10.1.2.2
+	\end{verbatim}
+
+	What is the result ?
+\end{itemize}
 
 \section{Submission}
 After finishing the lab, go to the terminal on your Linux system that was used to start the lab and type:
 \begin{verbatim}
-    stoplab routing-basics
+    stoplab sparta-routing-basics
 \end{verbatim}
-When you stop the lab, the system will display a path to the zipped lab results on your Linux system.  Provide that file to 
+When you stop the lab, the system will display a path to the zipped lab results on your Linux system.  Provide that file to
 your instructor, e.g., via the Sakai site.
 
 \end{document}
