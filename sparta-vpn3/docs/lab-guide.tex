@@ -1,0 +1,245 @@
+\input{header}
+\begin{document}
+
+\begin{center}
+{\LARGE IPTables: Site-to-Site VPN - Lab Guide}
+\vspace{0.1in}\\
+\end{center}
+
+\copyrightnotice
+
+\section{Overview}
+A VPN is virtual in that it carries information within a private network, but that information is actually transported over a public network.
+
+A VPN is private in that the traffic is encrypted to keep the data confidential while it is transported across the public network.
+
+OpenVPN is an open source tool that can be used to create VPN conections. It uses a custom protocol based on SSL and TLS.
+
+Site-to-site VPNs are used to connect networks across another untrusted network such as the internet.
+
+In a site-to-site VPN, end hosts send and receive normal unencrypted TCP/IP traffic through a VPN terminating device.
+
+In most cases, the devices in both networks don't need to do any more steps to exchange data with the devices in the other network.
+
+We will enhance the lab Host-to-Site VPN to establish the VPN connection between Site1-Router and the HQ-Router through the ISP network.
+
+\section{Lab Environment}
+This lab runs in the Labtainer framework,
+available at http://my.nps.edu/web/c3o/labtainers.
+That site includes links to a pre-built virtual machine
+that has Labtainers installed, however Labtainers can
+be run on any Linux host that supports Docker containers.
+
+From your labtainer-student (~/labtainer/labtainer-student) directory start the lab using:
+\begin{verbatim}
+    labtainer sparta-vpn3
+\end{verbatim}
+\noindent A link to this lab guide will be displayed.
+
+\section{Network Configuration}
+IP addresses and routing are configured on all devices.
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics [width=0.8\textwidth]{labtainers-vpn3-lab-01.png}
+\end{center}
+\caption{Network topology for routing-basics lab}
+\label{fig:topology}
+\end{figure}
+
+The network is composed of (find the main components of this network based on its topology):
+\begin{itemize}
+	\item
+	\item
+	\item
+	\item
+	\item
+	\item
+	\item
+\end{itemize}
+
+The OpenVPN application is pre-installed on the host and the server, and the OpenVPN configuration files already exist.
+
+\section{Credentials}
+\begin{itemize}
+	\item \textbf{Host-11}:
+	\begin{itemize}
+		\item \textbf{Username:} user-11
+		\item \textbf{Password:} user-11
+	\end{itemize}
+	\item \textbf{Host-12}:
+	\begin{itemize}
+		\item \textbf{Username:} user-12
+		\item \textbf{Password:} user-12
+	\end{itemize}
+	\item \textbf{Web-Server1}:
+	\begin{itemize}
+		\item \textbf{Username:} web-admin
+		\item \textbf{Password:} web-admin
+	\end{itemize}
+	\item \textbf{Web-Server2}:
+	\begin{itemize}
+		\item \textbf{Username:} web-admin
+		\item \textbf{Password:} web-admin
+	\end{itemize}
+	\item \textbf{Site1-Router}:
+	\begin{itemize}
+		\item \textbf{Username:} admin
+		\item \textbf{Password:} admin
+	\end{itemize}
+	\item \textbf{ISP-Router}:
+	\begin{itemize}
+		\item \textbf{Username:} admin
+		\item \textbf{Password:} admin
+	\end{itemize}
+	\item \textbf{HQ-Router}:
+	\begin{itemize}
+		\item \textbf{Username:} admin
+		\item \textbf{Password:} admin
+	\end{itemize}
+\end{itemize}
+
+\section{Lab Tasks}
+
+\subsection{Checking/Testing the Initial Configuration}\label{Checking/Testing the Initial Configuration}
+Its your task to test the configuration and to report what does/not work
+
+
+\subsection{Capturing the Traffic}
+Lets use \textbf{tcpdump} which is a command line tool that can capture TCP/IP and other packets being transmitted or received over a network interface.
+\newline
+\newline
+In the ISP-Router terminal, run the following command:
+\begin{verbatim}
+    sudo tcpdump -n -XX -i eth1
+\end{verbatim}
+
+Lets run tcpdump on Web-Server1 so we can monitor the traffic received on the server:
+\begin{verbatim}
+    sudo tcpdump -n -XX -i eth0
+\end{verbatim}
+
+Lets run tcpdump on Web-Server2 so we can monitor the traffic received on the server:
+\begin{verbatim}
+    sudo tcpdump -n -XX -i eth0
+\end{verbatim}
+
+\subsection{Configuring the VPN - HQ-Router}
+\begin{itemize}
+	\item Check VPN configuration
+
+		\begin{verbatim}
+				ls
+		\end{verbatim}
+
+		Notice that there are two files:
+
+		\begin{itemize}
+			\item gateway.conf: it contains the OpenVPN  configuration that will be used during establishing the VPN connection with the VPN-Gateway.
+				\begin{verbatim}
+						cat gateway.conf
+				\end{verbatim}
+
+				The file content is as follows:
+					\begin{itemize}
+						\item The first line `dev tun` is the defining the type of the device/interface that will be created during the VPN establishment. In this case, we are using tunnel interface.
+						\item The second line `ifconfig 192.168.1.1 192.168.1.2` defines the IP addresses of both end of tunnel.
+						\item The third line `secret static.key` points to the file where the shared static key is stored.
+						\item The fourth line `push "route 10.1.2.0 255.255.255.0"` advertises to the vpn-client that this network can be reached through the VPN-tunnel.
+						\item The fifth line `route 10.1.1.0 255.255.255.0 192.168.1.1 1` adds a new routing record to route thr traffic to this network through the tunnel interface. The `1` at the end of the line gives this route a higher priority than all other previous routes to the same network.
+					\end{itemize}
+			\item static.key: it contains the same secret key that exists on the client and will be used to establish the VPN connection with the hq-router.
+				\begin{verbatim}
+						cat static.conf
+				\end{verbatim}
+
+		\end{itemize}
+
+	\item Establishing the VPN connection.
+		\begin{verbatim}
+				sudo openvpn --config gateway.conf --daemon
+		\end{verbatim}
+\end{itemize}
+
+\subsection{Configuring the VPN - Site1-Router Side}
+\begin{itemize}
+	\item Check VPN configuration
+
+		\begin{verbatim}
+				ls
+		\end{verbatim}
+
+		Notice that there are two files:
+
+		\begin{itemize}
+			\item site1.conf: it contains the OpenVPN  configuration that will be used during establishing the VPN connection with the VPN-Gateway.
+				\begin{verbatim}
+						cat site1.conf
+				\end{verbatim}
+
+				The file content is as follows:
+					\begin{itemize}
+						\item The first line `remote 200.200.200.2` is the OpenVPN Gateway that it will connect to.
+						\item The second line `dev tun` is the defining the type of the device/interface that will be created during the VPN establishment. In this case, we are using tunnel interface.
+						\item The third line `ifconfig 192.168.1.1 192.168.1.2` defines the IP addresses of both end of tunnel.
+						\item The fourth line `secret static.key` points to the file where the shared static key is stored.
+						\item The fifth line `push "route 10.1.1.0 255.255.255.0"` advertises to the vpn-gateway that this network can be reached through the VPN-tunnel.
+						\item The sixth line `route 10.1.2.0 255.255.255.0 192.168.1.1` adds a new routing record to route thr traffic to this network through the tunnel interface. The `1` at the end of the line gives this route a higher priority than all other previous routes to the same network.
+					\end{itemize}
+			\item static.key: it contains the secret key that will be used to establish the VPN connection with the VPN-Gateway. This is a shared key, that means the VPN-Gateway should have the exact key in order to successfully establish the connection.
+				\begin{verbatim}
+						cat static.conf
+				\end{verbatim}
+
+		\end{itemize}
+
+	\item Start the VPN connection on the VPN-Gateway.
+		\begin{verbatim}
+				sudo openvpn --config site1.conf --daemon
+		\end{verbatim}
+\end{itemize}
+
+
+\section{Testing the connectivity}
+\begin{itemize}
+	\item On HQ-Router (Check IP configuration and network interfaces)
+	\begin{verbatim}
+	    ip addr
+	\end{verbatim}
+
+	What is the result ? How many interfaces on the this machine ?
+
+	\item On Site1-Router (Check IP configuration and network interfaces)
+	\begin{verbatim}
+	    ip addr
+	\end{verbatim}
+
+	What is the result ? How many interfaces on the this machine ?
+
+	\item On Host-11, Host-12 (Ping Host-11,Host-12 -$>$ Web-Server1, Web-Server2)
+	\begin{verbatim}
+	    ping 10.1.2.1
+			wget 10.1.2.1
+			ping 10.1.2.2
+			wget 10.1.2.2
+	\end{verbatim}
+
+	What is the result ? Why do we used the private IP addresses not the tunnel ones ?
+
+	\item Check the router terminal to see whether you still can find unencrypted text in the packets captured by the router.
+
+	Check whether you can see the IP addresses (10.1.1.1, 10.1.2.1 or 10.1.2.2). Why can't you see any of them ?
+
+	\item Check the server terminal and check which IP addresses you can see in the log. Can you see the IP address 10.1.1.1 ? Why ?
+
+\end{itemize}
+
+\section{Submission}
+After finishing the lab, go to the terminal on your Linux system that was used to start the lab and type:
+\begin{verbatim}
+    stoplab sparta-vpn3
+\end{verbatim}
+When you stop the lab, the system will display a path to the zipped lab results on your Linux system.  Provide that file to
+your instructor, e.g., via the Sakai site.
+
+\end{document}

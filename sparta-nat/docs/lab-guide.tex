@@ -106,6 +106,19 @@ In the ISP terminal, run the following command:
 \newline
 Now, you can see that the packets are arriving at the ISP router (with their private IP address), but then the ISP router has no routes for private IP addresses that they exist in customers networks so it doesn't know where to send the response.
 
+\subsection{Testing the Initial Configuration}\label{Testing the Initial Configuration}
+\begin{itemize}
+	\item On Host-11 (Send HTTP request Host-11 -$>$ Web-Server to get a web page)
+	\begin{verbatim}
+	    wget http://10.1.2.1/index.html
+	\end{verbatim}
+
+	What is the result ?
+
+	\item Check the router terminal, scroll up to check all the packets captured by the router. Notice that you can find the content of the html page.
+
+		That means the traffic isn't encrypted and the packets (info) can be read by any device on the route between the client and the server.
+\end{itemize}
 \subsection{Configuring the NAT Rules on the Firewall}
 Lets run this command that will perform NAT on all packets passing by the gateway and leaving the router from the interface `eth0` which is the interface connected to the ISP router in our design and it has the public IP address which is the routable address in the network.
 
