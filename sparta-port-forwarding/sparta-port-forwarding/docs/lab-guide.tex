@@ -1,0 +1,192 @@
+\input{header}
+\begin{document}
+
+\begin{center}
+{\LARGE IPTables: Port Forwarding - Lab Guide}
+\vspace{0.1in}\\
+\end{center}
+
+\copyrightnotice
+
+\section{Overview}
+Iptables is a command line software-based firewall in Linux. It uses policy chains to allow and to block traffic.
+
+IPTables is used as a Firewall and can perform NAT and PAT operations.
+
+In this lab, we focus on IPTables configuration to allow and deny access from/to IP addresses and/or services.
+
+\section{Lab Environment}
+This lab runs in the Labtainer framework,
+available at http://my.nps.edu/web/c3o/labtainers.
+That site includes links to a pre-built virtual machine
+that has Labtainers installed, however Labtainers can
+be run on any Linux host that supports Docker containers.
+
+From your labtainer-student (~/labtainer/labtainer-student) directory start the lab using:
+\begin{verbatim}
+    labtainer sparta-port-forwarding
+\end{verbatim}
+\noindent A link to this lab guide will be displayed.
+
+\section{Network Configuration}
+IP addresses and routing are configured on all devices.
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics [width=0.8\textwidth]{labtainers-port-forwarding-lab-01.png}
+\end{center}
+\caption{Network topology for routing-basics lab}
+\label{fig:topology}
+\end{figure}
+
+\section{Credentials}
+\begin{itemize}
+	\item \textbf{Host-11}:
+	\begin{itemize}
+		\item \textbf{Username:} user-11
+		\item \textbf{Password:} user-11
+	\end{itemize}
+	\item \textbf{Host-12}:
+	\begin{itemize}
+		\item \textbf{Username:} user-12
+		\item \textbf{Password:} user-12
+	\end{itemize}
+	\item \textbf{Gateway}:
+	\begin{itemize}
+		\item \textbf{Username:} admin
+		\item \textbf{Password:} admin
+	\end{itemize}
+	\item \textbf{ISP}:
+	\begin{itemize}
+		\item \textbf{Username:} admin
+		\item \textbf{Password:} admin
+	\end{itemize}
+	\item \textbf{Web-Server}:
+	\begin{itemize}
+		\item \textbf{Username:} web-admin
+		\item \textbf{Password:} web-admin
+	\end{itemize}
+	\item \textbf{SSH-Server}:
+	\begin{itemize}
+		\item \textbf{Username:} ssh-admin
+		\item \textbf{Password:} ssh-admin
+	\end{itemize}
+	\item \textbf{Server-Gateway}:
+	\begin{itemize}
+		\item \textbf{Username:} admin
+		\item \textbf{Password:} admin
+	\end{itemize}
+\end{itemize}
+
+\section{Lab Tasks}
+
+\subsection{Configuring the NAT Rules on the Gateway}
+\begin{itemize}
+	\item The default rules in iptables allow all type of traffic to pass.
+
+		\begin{itemize}
+			\item We will start by deleting (flushing) all rules.
+			\begin{verbatim}
+					sudo iptables -F
+					sudo iptables -t nat -F
+					sudo iptables -X
+			\end{verbatim}
+
+			\item Drop all packets by default
+			\begin{verbatim}
+					sudo iptables -P FORWARD DROP
+					sudo iptables -P INPUT   DROP
+					sudo iptables -P OUTPUT  DROP
+			\end{verbatim}
+		\end{itemize}
+
+	\item Lets run this command that will perform NAT on all packets passing by the gateway and leaving the router from the interface eth0 which is the interface connected to the ISP router in our design and it has the public IP address which is the routable address in the network.
+		\begin{verbatim}
+				sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+		\end{verbatim}
+\end{itemize}
+
+\subsection{Configuring the NAT Rules on the Server-Gateway}
+\begin{itemize}
+	\item The default rules in iptables allow all type of traffic to pass.
+
+		\begin{itemize}
+			\item We will start by deleting (flushing) all rules.
+			\begin{verbatim}
+					sudo iptables -F
+					sudo iptables -t nat -F
+					sudo iptables -X
+			\end{verbatim}
+
+			\item Drop all packets by default
+			\begin{verbatim}
+					sudo iptables -P FORWARD DROP
+					sudo iptables -P INPUT   DROP
+					sudo iptables -P OUTPUT  DROP
+			\end{verbatim}
+		\end{itemize}
+
+	\item Now, let configure the Server-Gateway to forward traffic received on its IP address to the servers (TCP80 to Web-Server and TCP22 to SSH-Server). We will start by deleting (flushing) all rules.
+		\begin{verbatim}
+				sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT \
+					--to-destination 10.1.2.1:80
+				sudo iptables -t nat -A PREROUTING -p tcp --dport 22 -j DNAT  \
+					--to-destination 10.1.2.2:22
+				sudo iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
+		\end{verbatim}
+\end{itemize}
+
+\section{Testing the connectivity}
+\begin{itemize}
+	\item On Host-11 (Send HTTP request Host-11 -$>$ Web-Server to get a web page)
+	\begin{verbatim}
+	    wget http://100.100.100.2
+	\end{verbatim}
+
+	What is the result ? Which device is sending the response in this case ?
+
+	\item On Host-11 (SSH Host-11 -$>$ Web-Server)
+	\begin{verbatim}
+			ssh ssh-admin@100.100.100.2
+	\end{verbatim}
+
+	What is the result ? Which device is sending the response in this case ?
+
+	\item On Host-11 (Ping Host-11 -$>$ Web-Server)
+	\begin{verbatim}
+			ping 100.100.100.2
+	\end{verbatim}
+
+	What is the result ? Which device is sending the response in this case ?
+
+	\item On Host-12 (Send HTTP request Host-12 -$>$ Web-Server to get a web page)
+	\begin{verbatim}
+	    wget http://100.100.100.2
+	\end{verbatim}
+
+	What is the result ? Which device is sending the response in this case ?
+
+	\item On Host-12 (SSH Host-12 -$>$ Web-Server)
+	\begin{verbatim}
+			ssh ssh-admin@100.100.100.2
+	\end{verbatim}
+
+	What is the result ? Which device is sending the response in this case ?
+
+	\item On Host-12 (Ping Host-12 -$>$ Web-Server)
+	\begin{verbatim}
+			ping 100.100.100.2
+	\end{verbatim}
+
+	What is the result ? Which device is sending the response in this case ?
+\end{itemize}
+
+\section{Submission}
+After finishing the lab, go to the terminal on your Linux system that was used to start the lab and type:
+\begin{verbatim}
+    stoplab sparta-port-forwarding
+\end{verbatim}
+When you stop the lab, the system will display a path to the zipped lab results on your Linux system.  Provide that file to
+your instructor, e.g., via the Sakai site.
+
+\end{document}
