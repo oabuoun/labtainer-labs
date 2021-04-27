@@ -1,0 +1,162 @@
+\input{header}
+\begin{document}
+
+\begin{center}
+{\LARGE IPTables: NAT Rules - Lab Guide}
+\vspace{0.1in}\\
+\end{center}
+
+\copyrightnotice
+
+\section{Overview}
+Iptables is a command line software-based firewall in Linux. It uses policy chains to allow and to block traffic.
+
+IPTables is used as a Firewall and can perform NAT and PAT operations.
+
+In this lab, we focus on IPTables configuration to allow and deny access from/to IP addresses and/or services.
+
+\section{Lab Environment}
+This lab runs in the Labtainer framework,
+available at http://my.nps.edu/web/c3o/labtainers.
+That site includes links to a pre-built virtual machine
+that has Labtainers installed, however Labtainers can
+be run on any Linux host that supports Docker containers.
+
+From your labtainer-student (~/labtainer/labtainer-student) directory start the lab using:
+\begin{verbatim}
+    labtainer sparta-nat
+\end{verbatim}
+\noindent A link to this lab guide will be displayed.
+
+\section{Network Configuration}
+IP addresses and routing are configured on all devices.
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics [width=0.8\textwidth]{labtainers-nat-lab-01.png}
+\end{center}
+\caption{Network topology for routing-basics lab}
+\label{fig:topology}
+\end{figure}
+
+\section{Credentials}
+\begin{itemize}
+	\item \textbf{Host-11}:
+	\begin{itemize}
+		\item \textbf{Username:} user-11
+		\item \textbf{Password:} user-11
+	\end{itemize}
+	\item \textbf{Host-12}:
+	\begin{itemize}
+		\item \textbf{Username:} user-12
+		\item \textbf{Password:} user-12
+	\end{itemize}o
+	\item \textbf{Web-Server}:
+	\begin{itemize}
+		\item \textbf{Username:} web-admin
+		\item \textbf{Password:} web-admin
+	\end{itemize}
+	\item \textbf{Firewall}:
+	\begin{itemize}
+		\item \textbf{Username:} admin
+		\item \textbf{Password:} admin
+	\end{itemize}
+\end{itemize}
+
+\section{Lab Tasks}
+
+\subsection{Testing the Initial Configuration}\label{Testing the Initial Configuration}
+Lets check what we can/can't do in this network.
+\newline
+\begin{itemize}
+	\item On Host-11 (Ping Host-11 -$>$ Gateway: Internal Interface)
+	\begin{verbatim}
+	    ping 10.1.1.254
+	\end{verbatim}
+
+	What is the result ?
+
+	\item On Host-11 (Ping Host-11 -$>$ Gateway: External Interface)
+	\begin{verbatim}
+	    ping 200.200.200.2
+	\end{verbatim}
+
+	What is the result ?
+
+	\item On Host-11 (Ping Host-11 -$>$ ISP: eth0)
+	\begin{verbatim}
+	    ping 200.200.200.1
+	\end{verbatim}
+
+	What is the result ?
+
+\end{itemize}
+
+\subsection{Capturing the Traffic}
+Lets use \textbf{tcpdump} which is a command line tool that can capture TCP/IP and other packets being transmitted or received over a network interface.
+\newline
+\newline
+In the ISP terminal, run the following command:
+\begin{verbatim}
+    sudo tcpdump -i eth0
+\end{verbatim}
+
+\textbf{eth0} is the interface connected to our gateway. You can make sure of that by running \textbf{ifconfig} or \textbf{ip add}
+\newline
+\newline
+Now, you can see that the packets are arriving at the ISP router (with their private IP address), but then the ISP router has no routes for private IP addresses that they exist in customers networks so it doesn't know where to send the response.
+
+\subsection{Testing the Initial Configuration}\label{Testing the Initial Configuration}
+\begin{itemize}
+	\item On Host-11 (Send HTTP request Host-11 -$>$ Web-Server to get a web page)
+	\begin{verbatim}
+	    wget http://10.1.2.1/index.html
+	\end{verbatim}
+
+	What is the result ?
+
+	\item Check the router terminal, scroll up to check all the packets captured by the router. Notice that you can find the content of the html page.
+
+		That means the traffic isn't encrypted and the packets (info) can be read by any device on the route between the client and the server.
+\end{itemize}
+\subsection{Configuring the NAT Rules on the Firewall}
+Lets run this command that will perform NAT on all packets passing by the gateway and leaving the router from the interface `eth0` which is the interface connected to the ISP router in our design and it has the public IP address which is the routable address in the network.
+
+\begin{verbatim}
+		sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+\end{verbatim}
+
+Now, stop the ping command on Host-11 and re-issue the command again, notice that the ping is working and the ISP router is receiving the packets with the public IP address of the router rather than the private IP address of the host itself.
+\newline
+\newline
+Repeat the same command from host-12 and notice that the router is receiving the packets from the Host-12 with the gateway public IP address too.
+\newline
+\newline
+In a way, the ISP router cannot tell which host is sending these packets.
+
+Try fetching the web page from the web server using wget
+\begin{itemize}
+	\item Test the connectivity: On Host-11 (Send HTTP request Host-11 -$>$ Web-Server to get a web page)
+	\begin{verbatim}
+			wget http://100.100.100.2/index.html
+	\end{verbatim}
+
+	What is the result ?
+
+	\item Test the connectivity: On Host-11 (Send HTTP request Host-11 -$>$ Web-Server to get a web page)
+	\begin{verbatim}
+			wget http://100.100.100.2/index.html
+	\end{verbatim}
+
+	What is the result ?
+\end{itemize}
+
+\section{Submission}
+After finishing the lab, go to the terminal on your Linux system that was used to start the lab and type:
+\begin{verbatim}
+    stoplab sparta-nat
+\end{verbatim}
+When you stop the lab, the system will display a path to the zipped lab results on your Linux system.  Provide that file to
+your instructor, e.g., via the Sakai site.
+
+\end{document}
