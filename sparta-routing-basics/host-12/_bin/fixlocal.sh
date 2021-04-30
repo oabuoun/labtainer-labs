@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#  This script will be run after parameterization has completed, e.g., 
+#  This script will be run after parameterization has completed, e.g.,
 #  use this to compile source code that has been parameterized.
 #  The container user password will be passed as the first argument,
 #  (the user ID is the second parameter)
@@ -16,3 +16,7 @@
 #   PERMLOCKDIR=/var/labtainer/did_param
 #   echo $1 | sudo -S mkdir -p "$PERMLOCKDIR"
 
+NETWORK_IF=$(ifconfig | grep -B1 "inet addr:10.1.1.2" | awk '$1!="inet" && $1!="--" {print $1}')
+
+sudo ip add flush $NETWORK_IF
+sudo ip route del default
