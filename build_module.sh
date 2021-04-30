@@ -1,3 +1,5 @@
+#!/usr/bin/env zsh
+
 #   Build
 echo "=== `date` : Start Building Labtainer Lab $1 $==="
 
