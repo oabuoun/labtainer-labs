@@ -9,7 +9,7 @@ git add ${1}
 git commit ${1} -m "Adding an IModule"
 cd $LABTAINER_DIR/distrib
 
-./publish.py -d -l -f ${1}
+./publish.py -d -f -l ${1}
 
 #cd /home/student/labtainer/trunk/scripts/designer/bin
 
