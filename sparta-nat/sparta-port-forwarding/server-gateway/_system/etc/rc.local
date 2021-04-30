@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sudo ip route del default
+sudo ip route add default via 100.100.100.1
