@@ -1,4 +1,0 @@
-#!/bin/bash -e
-date >/tmp/rc.log
-sudo ip route del default
-sudo ip route add default via 10.1.1.254
