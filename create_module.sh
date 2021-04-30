@@ -24,8 +24,7 @@ echo "=== `date` : Create an Imodule For Labtainer Lab $1 $==="
 # Create the imodule
 create-imodules.sh
 cp -rp ~/labtainer/trunk/labs/${1} ~/devsecops_labs/
-cp $LABTAINER_DIR/imodule.tar ~/devsecops_labs/imodules/${1}.tar
-cp $LABTAINER_DIR/imodule.tar ~/cyberlabs/labtainer/labs/${1}.tar
+cp $LABTAINER_DIR/imodule.tar ~/labtainer-labs/imodules/${1}.tar
 
 echo "=== `date` : Remove the Git repository from labs$==="
 cd ~/labtainer/trunk/labs/
@@ -39,10 +38,3 @@ git add ~/devsecops_labs/imodules/${1}.tar
 git add ~/devsecops_labs/${1}
 git commit -m "added/updated imodule $1"
 git push origin master
-
-echo "=== `date` : Pushing the Imodule to Cyberlabs Git Repository $1 $==="
-cd ~/cyberlabs
-git add ~/cyberlabs/labtainer/labs/${1}.tar
-git commit -m "added/updated imodule $1"
-git push origin master
-
