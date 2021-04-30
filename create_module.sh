@@ -19,9 +19,7 @@ create-imodules.sh
 
 echo "=== `date` : Remove the Git repository from labs$==="
 cd ~/labtainer/trunk/labs/
-#git rm --cached -r .
-git update-ref -d HEAD
-git commit -m "reset to HEAD after creating $1 module"
+rm -rf .git
 
 rsync --delete -v -a ~/labtainer/trunk/labs/${1} ~/labtainer-labs/
 cp $LABTAINER_DIR/imodule.tar $LABTAINER_DIR/${1}.tar
