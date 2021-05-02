@@ -11,8 +11,7 @@
 # The labtainer.network image adds the following packages:
 #   openssl openssh-server openvpn wget tcpdump  update-inetd  xinetd
 #
-ARG registry=oabuoun
-FROM $registry/labtainer-ubuntu-network-ssh
+FROM oabuoun/labtainer-ubuntu-network-ssh
 
 #
 #  lab is the fully qualified image name, e.g., mylab.some_container.student
