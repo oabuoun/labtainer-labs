@@ -15,8 +15,3 @@
 #
 #   PERMLOCKDIR=/var/labtainer/did_param
 #   echo $1 | sudo -S mkdir -p "$PERMLOCKDIR"
-
-NETWORK_IF=$(ifconfig | grep -B1 "inet addr:10.1.2.1" | awk '$1!="inet" && $1!="--" {print $1}')
-
-sudo ip add flush $NETWORK_IF
-sudo ip route del default

@@ -13,7 +13,7 @@
 #
 ARG registry
 #FROM $registry/labtainer.base
-FROM $registry/labtainer.network.ssh
+FROM oabuoun/labtainer-ubuntu-network-ssh
 #FROM $registry/labtainer.centos
 #FROM $registry/labtainer.lamp
 #
