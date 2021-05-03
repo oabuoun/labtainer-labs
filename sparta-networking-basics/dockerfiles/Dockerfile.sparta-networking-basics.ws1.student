@@ -1,5 +1,5 @@
 ARG registry
-FROM ubuntu
+FROM ubuntu:xenial
 
 ARG lab
 ARG labdir
@@ -16,7 +16,10 @@ ADD $labdir/sys_$lab.tar.gz /
 
 # Root Operations - Begin
 RUN apt-get update
-RUN apt-get -y install traceroute net-tools init systemd iproute2
+RUN rm /var/cache/ldconfig/aux-cache
+RUN apt-get -y install init systemd
+RUN apt-get -y install net-tools traceroute
+RUN apt-get -y install iproute2
 
 # Root Operations - END
 
@@ -42,7 +45,6 @@ ADD $labdir/$lab.tar.gz $HOME
 #  The first thing that executes on the container.
 #
 USER root
-RUN systemctl enable mynotify
 RUN systemctl enable rc-local
 
 CMD ["/bin/bash", "-c", "exec /sbin/init --log-target=journal 3>&1"]
