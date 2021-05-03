@@ -21,5 +21,5 @@ echo "=== `date` : Remove the Git repository from labs$==="
 cd ~/labtainer/trunk/labs/
 rm -rf .git
 
-rsync --delete -v -a ~/labtainer/trunk/labs/${1} ~/labtainer-labs/
+#rsync --delete -v -a ~/labtainer/trunk/labs/${1} ~/labtainer-labs/
 cp $LABTAINER_DIR/imodule.tar $LABTAINER_DIR/${1}.tar
