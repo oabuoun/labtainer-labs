@@ -13,7 +13,7 @@
 #
 ARG registry
 #FROM $registry/labtainer.base
-FROM oabuoun/labtainer-ubuntu-network-ssh
+FROM $registry/labtainer.network
 #FROM $registry/labtainer.centos
 #FROM $registry/labtainer.lamp
 #
@@ -68,4 +68,4 @@ ADD $labdir/$lab.tar.gz $HOME
 #  The first thing that executes on the container.
 #
 USER root
-CMD ["/sbin/init"]
+CMD ["/bin/bash", "-c", "exec /sbin/init --log-target=journal 3>&1"]
