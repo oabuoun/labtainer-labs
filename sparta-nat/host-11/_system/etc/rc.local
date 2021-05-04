@@ -1,2 +1,3 @@
 #!/bin/bash -e
-date >/tmp/rc.log
+
+exit 0
