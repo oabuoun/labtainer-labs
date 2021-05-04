@@ -10,6 +10,4 @@
 # Use gateway as the name server
 #
 
-echo fixlocal $(date) >> /home/harry/log
-sudo systemctl start rc-local
-echo fixlocal $(date) >> /home/harry/log
+sudo sh /etc/rc.local
