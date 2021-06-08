@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+mkdir -p ${HOME}/.local/share/labtainers
+
 cd ${HOME}/labtainer/labtainer-student
 
 echo "=== `date` : Start Adding Labtainer Labs ==="
