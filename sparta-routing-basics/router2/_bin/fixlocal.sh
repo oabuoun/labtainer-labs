@@ -8,3 +8,5 @@
 #  echo $1 | sudo -S the-command
 #
 #
+
+sudo sh /etc/rc.local

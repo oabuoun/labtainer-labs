@@ -12,7 +12,7 @@
 #   openssl openssh-server openvpn wget tcpdump  update-inetd  xinetd
 #
 ARG registry
-FROM $registry/labtainer.lamp.xtra
+FROM $registry/labtainer.centos6.xtra
 #
 #  lab is the fully qualified image name, e.g., mylab.some_container.student
 #  labdir is the name of the lab, e.g., mylab
@@ -39,6 +39,21 @@ RUN echo "$user_name:$password" | chpasswd
 # replace above with below for centos/fedora
 RUN usermod $user_name -a -G wheel
 
+LABEL description="This is base Docker image for Labtainer CENTOS-hosted LAMP images"
+#
+RUN wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
+RUN rpm -ivh mysql-community-release-el7-5.noarch.rpm
+RUN yum -y update
+RUN yum install -y httpd mysql-server php php-mcrypt php-mysqlnd php-xml php-gd php-mbstring mod_ssl
+RUN systemctl enable httpd.service
+
+ADD system/etc/systemd/system/httpd.service /etc/systemd/system/
+# change link to new httpd.service file
+RUN systemctl disable httpd.service
+RUN systemctl enable httpd.service
+ADD system/sbin/waitparam.sh /sbin/waitparam.sh
+ADD system/lib/systemd/system/waitparam.service.cfs /lib/systemd/system/waitparam.service
+RUN systemctl enable waitparam.service
 
 #
 #  **** Perform all root operations, e.g.,           ****

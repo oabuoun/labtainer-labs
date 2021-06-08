@@ -1,7 +1,6 @@
 #!/bin/bash -e
-date >/tmp/rc.log
 
-NETWORK_IF=$(ifconfig | grep -B1 "inet 10.1.1.2" | awk '$1!="inet" && $1!="--" {print $1}')
+NETWORK_IF=$(ifconfig | grep -B1 "inet addr:10.1.1.2" | awk '$1!="inet" && $1!="--" {print $1}')
 
 sudo ip add flush $NETWORK_IF
 sudo ip route del default

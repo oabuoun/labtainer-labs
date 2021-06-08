@@ -15,3 +15,5 @@
 #
 #   PERMLOCKDIR=/var/labtainer/did_param
 #   echo $1 | sudo -S mkdir -p "$PERMLOCKDIR"
+
+sudo sh /etc/rc.local
