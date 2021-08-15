@@ -1,1 +1,1 @@
-Example use of OpenVPN to create Host-to-Host VPN
+Example use of IPTables to configure NAT - Port Forwarding rules

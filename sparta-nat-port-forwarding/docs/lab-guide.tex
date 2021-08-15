@@ -26,7 +26,7 @@ be run on any Linux host that supports Docker containers.
 
 From your labtainer-student (~/labtainer/labtainer-student) directory start the lab using:
 \begin{verbatim}
-    labtainer sparta-port-forwarding
+    labtainer sparta-nat-port-forwarding
 \end{verbatim}
 \noindent A link to this lab guide will be displayed.
 
@@ -86,22 +86,6 @@ IP addresses and routing are configured on all devices.
 \begin{itemize}
 	\item The default rules in iptables allow all type of traffic to pass.
 
-		\begin{itemize}
-			\item We will start by deleting (flushing) all rules.
-			\begin{verbatim}
-					sudo iptables -F
-					sudo iptables -t nat -F
-					sudo iptables -X
-			\end{verbatim}
-
-			\item Drop all packets by default
-			\begin{verbatim}
-					sudo iptables -P FORWARD DROP
-					sudo iptables -P INPUT   DROP
-					sudo iptables -P OUTPUT  DROP
-			\end{verbatim}
-		\end{itemize}
-
 	\item Lets run this command that will perform NAT on all packets passing by the gateway and leaving the router from the interface eth0 which is the interface connected to the ISP router in our design and it has the public IP address which is the routable address in the network.
 		\begin{verbatim}
 				sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
@@ -111,22 +95,6 @@ IP addresses and routing are configured on all devices.
 \subsection{Configuring the NAT Rules on the Server-Gateway}
 \begin{itemize}
 	\item The default rules in iptables allow all type of traffic to pass.
-
-		\begin{itemize}
-			\item We will start by deleting (flushing) all rules.
-			\begin{verbatim}
-					sudo iptables -F
-					sudo iptables -t nat -F
-					sudo iptables -X
-			\end{verbatim}
-
-			\item Drop all packets by default
-			\begin{verbatim}
-					sudo iptables -P FORWARD DROP
-					sudo iptables -P INPUT   DROP
-					sudo iptables -P OUTPUT  DROP
-			\end{verbatim}
-		\end{itemize}
 
 	\item Now, let configure the Server-Gateway to forward traffic received on its IP address to the servers (TCP80 to Web-Server and TCP22 to SSH-Server). We will start by deleting (flushing) all rules.
 		\begin{verbatim}
@@ -186,7 +154,7 @@ IP addresses and routing are configured on all devices.
 \section{Submission}
 After finishing the lab, go to the terminal on your Linux system that was used to start the lab and type:
 \begin{verbatim}
-    stoplab sparta-port-forwarding
+    stoplab sparta-nat-port-forwarding
 \end{verbatim}
 When you stop the lab, the system will display a path to the zipped lab results on your Linux system.  Provide that file to
 your instructor, e.g., via the Sakai site.
