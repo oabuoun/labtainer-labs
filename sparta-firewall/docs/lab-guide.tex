@@ -3,6 +3,8 @@
 
 \begin{center}
 {\LARGE Firewall/IPTables - Lab Guide}
+
+V1.0.1 - Reviewed on 15/08/2021
 \vspace{0.1in}\\
 \end{center}
 
@@ -40,35 +42,35 @@ IP addresses and routing are configured on all devices.
 \end{figure}
 
 \section{Credentials}
-\begin{itemize}
+\begin{enumerate}
 	\item \textbf{Host-11}:
-	\begin{itemize}
+	\begin{enumerate}
 		\item \textbf{Username:} user-11
 		\item \textbf{Password:} user-11
-	\end{itemize}
+	\end{enumerate}
 	\item \textbf{Host-12}:
-	\begin{itemize}
+	\begin{enumerate}
 		\item \textbf{Username:} user-12
 		\item \textbf{Password:} user-12
-	\end{itemize}o
+	\end{enumerate}o
 	\item \textbf{Web-Server}:
-	\begin{itemize}
+	\begin{enumerate}
 		\item \textbf{Username:} web-admin
 		\item \textbf{Password:} web-admin
-	\end{itemize}
+	\end{enumerate}
 	\item \textbf{Firewall}:
-	\begin{itemize}
+	\begin{enumerate}
 		\item \textbf{Username:} admin
 		\item \textbf{Password:} admin
-	\end{itemize}
-\end{itemize}
+	\end{enumerate}
+\end{enumerate}
 
 \section{Lab Tasks}
 
 \subsection{Testing the Initial Configuration}\label{Testing the Initial Configuration}
 Lets check what we can/can't do in this network.
 \newline
-\begin{itemize}
+\begin{enumerate}
 	\item On Host-11 (Ping Host-11 -$>$ Web-Server)
 	\begin{verbatim}
 	    ping 10.1.2.1
@@ -98,6 +100,12 @@ Lets check what we can/can't do in this network.
 	\newline
 	\newline
 	What is the result ?
+
+  \item On Host-11 (Exit the SSH Session)
+	\begin{verbatim}
+	    exit
+	\end{verbatim}
+
 	\item On Host-12 (Ping Host-12 -$>$ Router1)
 	\begin{verbatim}
 	    ping 10.1.1.254
@@ -126,25 +134,31 @@ Lets check what we can/can't do in this network.
 	\newline
 	\newline
 	What is the result ?
-	\item On Host-12 (Ping Host-12 -$>$ Router1)
+
+  \item On Host-12 (Exit the SSH Session)
+	\begin{verbatim}
+	    exit
+	\end{verbatim}
+
+  \item On Host-12 (Ping Host-12 -$>$ Router1)
 	\begin{verbatim}
 	    ping 10.1.1.254
 	\end{verbatim}
 
 	What is the result ?
-\end{itemize}
+\end{enumerate}
 
 \subsection{Configuring the Firewall}
 
 Now, lets configure the firewall to allow only:
-\begin{itemize}
+\begin{enumerate}
 	\item Host-11 -$>$ Web-Server: SSH Protocol (TCP 22)
 	\item Host-12 -$>$ Web-Server: HTTP Protocol (TCP 80)
-\end{itemize}
+\end{enumerate}
 
 \textbf{The default rules in iptables allow all type of traffic to pass.}
 
-\begin{itemize}
+\begin{enumerate}
 	\item We will start by deleting (flushing) all rules.
 	\begin{verbatim}
 			sudo iptables -F
@@ -159,13 +173,20 @@ Now, lets configure the firewall to allow only:
 			sudo iptables -P OUTPUT  DROP
 	\end{verbatim}
 
+  \item Testing the connectivity On Host-11 \& Host-12
+	\begin{verbatim}
+			ping 10.1.2.1
+			wget http://10.1.2.1/index.html
+			ssh web-admin@10.1.2.1
+	\end{verbatim}
+
 	\item Allow (Operation: ACCEPT) forwarding traffic on firewall that matches the rules:
-		\begin{itemize}
+		\begin{enumerate}
 			\item Source IP: 10.1.1.1
 			\item Destination IP: 10.1.2.1
 			\item	Protocol: TCP
 			\item Port: 22 (SSH)
-		\end{itemize}
+		\end{enumerate}
 		\begin{verbatim}
 				sudo iptables -A FORWARD -p tcp --dport 22 -s 10.1.1.1 -d 10.1.2.1 -j ACCEPT
 		\end{verbatim}
@@ -178,12 +199,12 @@ Now, lets configure the firewall to allow only:
 		What is the result ? What is the reason in your opinion ?
 
 		\item Allow (Operation: ACCEPT) forwarding traffic on firewall that matches the rules:
-			\begin{itemize}
+			\begin{enumerate}
 				\item Source IP: 10.1.1.2
 				\item Destination IP: 10.1.2.1
 				\item	Protocol: TCP
 				\item Port: 80 (HTTP)
-			\end{itemize}
+			\end{enumerate}
 			\begin{verbatim}
 					sudo iptables -A FORWARD -p tcp --dport 80 -s 10.1.1.2 -d 10.1.2.1 -j ACCEPT
 			\end{verbatim}
@@ -199,7 +220,7 @@ Now, lets configure the firewall to allow only:
 		\begin{verbatim}
 				sudo iptables  -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 		\end{verbatim}
-\end{itemize}
+\end{enumerate}
 
 Now, refer to Section \ref{Testing the Initial Configuration} and redo all the tests again. Report to your instructor the tests which they worked and the ones that didn't work.
 
