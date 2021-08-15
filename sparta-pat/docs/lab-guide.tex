@@ -3,6 +3,8 @@
 
 \begin{center}
 {\LARGE IPTables: NAT Rules - Lab Guide}
+
+V1.0.1 - Reviewed on 15/08/2021
 \vspace{0.1in}\\
 \end{center}
 
@@ -24,7 +26,7 @@ be run on any Linux host that supports Docker containers.
 
 From your labtainer-student (~/labtainer/labtainer-student) directory start the lab using:
 \begin{verbatim}
-    labtainer sparta-nat
+    labtainer sparta-pat
 \end{verbatim}
 \noindent A link to this lab guide will be displayed.
 
@@ -33,7 +35,7 @@ IP addresses and routing are configured on all devices.
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics [width=0.8\textwidth]{labtainers-nat-lab-01.png}
+\includegraphics [width=0.8\textwidth]{labtainers-pat-lab-01.png}
 \end{center}
 \caption{Network topology for routing-basics lab}
 \label{fig:topology}
@@ -154,7 +156,7 @@ Try fetching the web page from the web server using wget
 \section{Submission}
 After finishing the lab, go to the terminal on your Linux system that was used to start the lab and type:
 \begin{verbatim}
-    stoplab sparta-nat
+    stoplab sparta-pat
 \end{verbatim}
 When you stop the lab, the system will display a path to the zipped lab results on your Linux system.  Provide that file to
 your instructor, e.g., via the Sakai site.
