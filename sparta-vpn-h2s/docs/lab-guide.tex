@@ -237,9 +237,9 @@ Lets run tcpdump on Web-Server1 so we can monitor the traffic received on the se
 	\item On Host-11 (Ping Host-11 -$>$ Web-Server)
 	\begin{verbatim}
 	    ping 192.168.1.1
-			wget 10.1.2.1
-			ping 10.1.2.2
-			wget 10.1.2.2
+	    wget 10.1.2.1
+	    ping 10.1.2.2
+	    wget 10.1.2.2
 	\end{verbatim}
 
 	What is the result ? Why do we used the private IP addresses not the tunnel ones ?
@@ -255,7 +255,7 @@ Lets run tcpdump on Web-Server1 so we can monitor the traffic received on the se
 \section{Submission}
 After finishing the lab, go to the terminal on your Linux system that was used to start the lab and type:
 \begin{verbatim}
-    stoplab sparta-vpn2
+    stoplab sparta-vpn-h2s
 \end{verbatim}
 When you stop the lab, the system will display a path to the zipped lab results on your Linux system.  Provide that file to
 your instructor, e.g., via the Sakai site.
