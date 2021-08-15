@@ -100,7 +100,7 @@ Lets use \textbf{tcpdump} which is a command line tool that can capture TCP/IP a
 \newline
 In the ISP terminal, run the following command:
 \begin{verbatim}
-    sudo tcpdump -i eth0
+    sudo tcpdump -i eth0 -n
 \end{verbatim}
 
 \textbf{eth0} is the interface connected to our gateway. You can make sure of that by running \textbf{ifconfig} or \textbf{ip add}
@@ -121,7 +121,7 @@ Now, you can see that the packets are arriving at the ISP router (with their pri
 
 		That means the traffic isn't encrypted and the packets (info) can be read by any device on the route between the client and the server.
 \end{itemize}
-\subsection{Configuring the NAT Rules on the Firewall}
+\subsection{Configuring the NAT Rules on the Gateway}
 Lets run this command that will perform NAT on all packets passing by the gateway and leaving the router from the interface `eth0` which is the interface connected to the ISP router in our design and it has the public IP address which is the routable address in the network.
 
 \begin{verbatim}
